@@ -10,188 +10,6 @@ describe("template spec", () => {
     cy.wait(1000);
   }
 
-  function getOrderIDWMS() {
-    return cy.readFile("cypress/temp/maDonHang.json").then((data) => {
-      const listOMS = data.maDonHangOMS; // mảng OMS
-      const results = []; // nơi lưu kết quả
-
-      cy.visit(`https://stg-wms.nandh.vn/order-list?`);
-
-      return cy
-        .wrap(listOMS)
-        .each((maOMS) => {
-          cy.log("Đang lấy mã OMS:", maOMS);
-
-          return cy
-            .contains("p", maOMS)
-            .closest("tr")
-            .then(($row) => {
-              const maDonHangWMS = $row.find("a.link-secondary").text().trim();
-              const loaiDon = $row
-                .find('span[class*="badge-soft"]')
-                .text()
-                .trim();
-
-              cy.log(`=> WMS: ${maDonHangWMS} - ${loaiDon}`);
-
-              // push vào mảng kết quả
-              results.push({
-                maOMS,
-                maWMS: maDonHangWMS,
-                loaiDon,
-              });
-            });
-        })
-        .then(() => {
-          // Lưu file cho use ở bước tiếp theo
-          cy.writeFile("cypress/temp/maDonHangWMS.json", {
-            danhSach: results,
-          });
-
-          cy.log("Đã lưu danh sách WMS:", JSON.stringify(results));
-        });
-    });
-  }
-
-  function selectPickupType(pickupType) {
-    cy.visit(`https://stg-wms.nandh.vn/pickup-order`);
-
-    cy.get("div.css-1jqq78o-placeholder")
-      .contains("Chọn loại bảng kê")
-      .click({ force: true });
-
-    return cy.contains("div", pickupType).click({ force: true });
-  }
-  function selectPickupStrategy(pickupStrategy) {
-    cy.get("div.css-1jqq78o-placeholder")
-      .contains("Chọn loại chiến lược")
-      .click({ force: true });
-    return cy.contains("div", pickupStrategy).click({ force: true });
-  }
-
-  function selectTote(size) {
-    cy.get("div.css-1jqq78o-placeholder")
-      .contains("Chọn kích thước rổ")
-      .click();
-    return cy.contains("div", size).click({ force: true });
-  }
-
-  function CreatePickupWithCondition(pickupType, pickupStrategy, toteSize) {
-    selectPickupType(pickupType);
-
-    const isSpecialType =
-      pickupType.includes("Bảng kê đơn hàng B2C - SSO") ||
-      pickupType.includes("Bảng kê đơn hàng B2C - MSO");
-
-    if (isSpecialType) {
-      cy.log(`⚠️ Đây là loại SSO/MSO, cần chọn Size Rổ và BỎ QUA Chiến lược.`);
-
-      // --- LOGIC MỚI: CHỌN SIZE RỔ ---
-      selectTote(toteSize);
-      // --- BỎ QUA selectPickupStrategy ---
-    } else {
-      cy.log(`✅ Cần chọn Chiến lược và BỎ QUA Size Rổ.`);
-
-      // --- LOGIC CHỌN CHIẾN LƯỢC ---
-      selectPickupStrategy(pickupStrategy);
-      // --- BỎ QUA selectTote ---
-    }
-  }
-
-  function selectCustomer(customer) {
-    cy.get("div.css-1jqq78o-placeholder").contains("Chọn khách hàng").click();
-    return cy.contains("div", customer).click({ force: true });
-  }
-
-  function selectTimeCreateOrder(time) {
-    cy.get("div.css-1jqq78o-placeholder")
-      .contains("Chọn thời gian tạo")
-      .click();
-    return cy.contains("div", time).click({ force: true });
-  }
-
-  function customizePickUpCondition(optionPickup) {
-    cy.get("button.btn-success").contains("Tuỳ chỉnh").click();
-    cy.get(".ri-arrow-down-s-line").click({ force: true });
-    cy.get(".input-group > .dropdown-menu > .dropdown-item")
-      .contains(optionPickup)
-      .click();
-  }
-
-  function createPickupType() {
-    cy.readFile("cypress/temp/maDonHangWMS.json").then((data) => {
-      cy.get("button[type='button']").contains("Nhập mã đơn").click();
-      cy.wait(1000);
-
-      const orderWMS = data.danhSach.map((item) => item.maWMS);
-      const chuoiNhap = orderWMS.join(", ");
-
-      cy.get(
-        "textarea[placeholder='Nhập danh sách mã đơn hàng, ví dụ: NH1234567, ABC-01, ...']"
-      )
-        .clear()
-        .type(chuoiNhap, { delay: 0 });
-
-      cy.get("button[type='button']").contains("Xác nhận").click();
-      cy.get("button.btn-success").contains("Xác nhận").click();
-
-      cy.get("button.btn-success").contains("Tạo bảng kê").click();
-      cy.wait(500);
-    });
-  }
-
-  function pickupItem() {
-    cy.addStorageWMS();
-
-    return cy
-      .readFile("cypress/temp/maDonHangWMS.json")
-      .then(({ danhSach, trolleyCode }) => {
-        const maWMSList = danhSach.map((x) => x.maWMS); // ✅ Lấy danh sách WMS đúng cách
-        cy.log("📦 Danh sách mã WMS:", JSON.stringify(maWMSList));
-
-        // 1. Tìm pickupCode
-        return cy.findPickupCodeByWMS(maWMSList).then((pickupCode) => {
-          // Lưu pickupCode
-          cy.readFile("cypress/temp/maDonHang.json").then((data) => {
-            cy.writeFile("cypress/temp/maDonHang.json", {
-              ...data,
-              pickupCode,
-            });
-          });
-
-          // 2. Login mobile và lấy token
-          return cy.loginMobileAPI().then(() => {
-            const mobileToken = Cypress.env("mobileToken");
-
-            // 3. Map trolley
-            return cy
-              .tryMapTrolley(pickupCode, trolleyCode, mobileToken)
-              .then(() => {
-                // 4. Lấy danh sách bin
-                return cy
-                  .getBinCodesForPicking(pickupCode, mobileToken)
-                  .then((binCodes) => {
-                    // 5. Pick items trong từng bin
-                    return cy
-                      .wrap(binCodes)
-                      .each((bin) => {
-                        return cy.pickItemsInBin(pickupCode, bin, mobileToken);
-                      })
-                      .then(() => {
-                        // 6. Commit status
-                        return cy.commitTrolleyStatus(
-                          pickupCode,
-                          trolleyCode,
-                          mobileToken
-                        );
-                      });
-                  });
-              });
-          });
-        });
-      });
-  }
-
   function getPickupType(pickupCode) {
     return cy
       .visit(`https://stg-wms.nandh.vn/receive-packing-trolley`)
@@ -205,22 +23,6 @@ describe("template spec", () => {
           .click({ force: true });
       });
   }
-
-  /**
-   * Thực hiện quy trình đóng gói B2C (packing) trên WMS.
-   * Xử lý các đơn hàng KHÔNG THEO THỨ TỰ (dựa vào API response).
-   * @param {string} pickupCode - Mã bảng kê xuất kho (PK).
-   */
-  /**
-   * Thực hiện quy trình đóng gói B2C (packing) trên WMS.
-   * Xử lý các đơn hàng KHÔNG THEO THỨ TỰ (dựa vào API response).
-   * @param {string} pickupCode - Mã bảng kê xuất kho (PK).
-   */
-  /**
-   * Thực hiện quy trình đóng gói B2C (packing) trên WMS.
-   * Dựa vào tracking_code trả về từ API commitItemSold để xử lý đúng đơn hàng.
-   * @param {string} pickupCode - Mã bảng kê xuất kho (PK).
-   */
   function dongGoiB2c(pickupCode) {
     cy.intercept(
       "PUT",
@@ -469,24 +271,15 @@ describe("template spec", () => {
         }
       });
   }
-  before(() => {
+
+  beforeEach(() => {
     cy.writeFile("cypress/temp/itemsList.json", []);
     loginWMS("thanh.nn@nandh.vn", "Nhl@123456", "FC HN");
   });
 
   it("Export order on WMS", () => {
-    getOrderIDWMS();
-    CreatePickupWithCondition(
-      "Bảng kê đơn hàng B2C",
-      "Lấy theo sản phẩm",
-      "Kích thước nhỏ"
-    );
-    selectCustomer("auto");
-    // selectTimeCreateOrder("12");
-    customizePickUpCondition("DS mã đơn hàng");
-    createPickupType();
-    return pickupItem().then((pickupCode) => {
-      return getPickupType(pickupCode).then(() => dongGoiB2c(pickupCode));
-    });
+    const pickupCode = "185035";
+    getPickupType(pickupCode);
+    dongGoiB2c(pickupCode);
   });
 });

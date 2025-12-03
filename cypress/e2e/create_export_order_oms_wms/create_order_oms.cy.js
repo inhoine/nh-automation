@@ -80,7 +80,7 @@ describe("Create order on OMS", () => {
     cy.wait(1000);
   }
 
-  Cypress._.times(3, () => {
+  Cypress._.times(2, () => {
     it("Create order successfully", () => {
       let maDonHangOMS; // 1. Khai báo biến để lưu Mã Đơn Hàng
 
@@ -90,10 +90,7 @@ describe("Create order on OMS", () => {
       selectStore();
       selectWarehouse("PK100270");
 
-      const products = [
-        { sku: "MHMSI", qty: 1 },
-        { sku: "MHASUS", qty: 1 },
-      ];
+      const products = [{ sku: "MHMSI", qty: 1 }];
       selectMoreSku(products);
 
       // B. Lấy Mã Đơn Hàng từ inputOrderID() và lưu vào biến

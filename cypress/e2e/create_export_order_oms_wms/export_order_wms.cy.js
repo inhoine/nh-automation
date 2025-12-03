@@ -1,8 +1,4 @@
 describe("template spec", () => {
-  before(() => {
-    loginWMS("thanh.nn@nandh.vn", "Nhl@123456", "FC HN");
-  });
-
   function loginWMS(email, password, fc) {
     cy.visit("https://stg-wms.nandh.vn/login");
     cy.get('input[name="email"]').type(email);
@@ -462,7 +458,9 @@ describe("template spec", () => {
 
     cy.wait(1500);
     // LỆNH QUÉT SẢN PHẨM
-    cy.get('input[placeholder="Quét mã sản phẩm"]', { timeout: 10000 })
+    cy.get('input[placeholder="Quét mã Sản phẩm/ Barcode/ Serial"]', {
+      timeout: 10000,
+    })
       .should("be.visible")
       .clear()
       .type(barcode)
@@ -576,6 +574,11 @@ describe("template spec", () => {
         }
       });
   }
+
+  before(() => {
+    cy.writeFile("cypress/temp/itemsList.json", []);
+    loginWMS("thanh.nn@nandh.vn", "Nhl@123456", "FC HN");
+  });
 
   it("Export order on WMS", () => {
     getOrderIDWMS();

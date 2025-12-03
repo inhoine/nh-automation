@@ -27,6 +27,32 @@ Cypress.Commands.add("loginMobileAPI", () => {
     });
 });
 
+Cypress.Commands.add("loginWMSAPI", () => {
+  return cy
+    .request("POST", "https://stg-wms.nandh.vn/v1/users/staff-login", {
+      email: "thanh.nn@nandh.vn",
+      password: "Nhl@123456",
+      warehouse_id: 3,
+    })
+    .then((resp) => {
+      const token = resp.body.data.token;
+      Cypress.env("token", token);
+
+      cy.log("Website Token: " + token);
+      const staffInfo = resp.body.data.staff_info;
+
+      // Set localStorage
+      window.localStorage.setItem("token", token);
+      window.localStorage.setItem("authUser", JSON.stringify(staffInfo));
+      window.localStorage.setItem("i18nextLng", "vi");
+
+      // ✅ Cách 1: Bọc return bằng cy.wrap()
+      return cy.wrap(token);
+
+      // hoặc Cách 2: bỏ return luôn, nếu không cần giá trị trả về
+    });
+});
+
 // --- TÌM PICKUP CODE ---
 Cypress.Commands.add("findPickupCodeByWMS", (maWMSList) => {
   cy.log("📦 Đang tìm pickupCode theo mã WMS...");
