@@ -517,7 +517,7 @@ describe("template spec", () => {
             .clear() // Đảm bảo trường input sạch
             .type("40x20x20") // Giả định mã vật liệu là 40x20x20
             .type("{enter}");
-          cy.wait(10000);
+          cy.wait(5000);
           cy.log(`\t\t🎉 WMS đã xác nhận đóng gói và chuyển đơn hàng.`);
           // **********************************************************
 

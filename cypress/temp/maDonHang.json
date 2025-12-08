@@ -1,3 +1,8 @@
 {
-  "maDonHangOMS": []
+  "maDonHangOMS": [
+    "OrderID-OMS1764923264109",
+    "OrderID-OMS1764923275688",
+    "OrderID-OMS1764923285752"
+  ],
+  "pickupCode": "147151"
 }
