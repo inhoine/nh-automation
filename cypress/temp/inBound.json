@@ -1,10 +1,10 @@
 {
-  "maThamChieuInbound": "MTC1764907452951",
+  "maThamChieuInbound": "MTC1765849179104",
   "productsInbound": [
     {
-      "sku": "HOPKH",
-      "qty": 100
+      "sku": "MHMSI",
+      "qty": 1000
     }
   ],
-  "trimmedMaDonHang": "NHIV2941158639"
+  "trimmedMaDonHang": "NHIV2942749507"
 }

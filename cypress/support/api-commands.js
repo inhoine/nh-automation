@@ -30,9 +30,9 @@ Cypress.Commands.add("loginMobileAPI", () => {
 Cypress.Commands.add("loginWMSAPI", () => {
   return cy
     .request("POST", "https://stg-wms.nandh.vn/v1/users/staff-login", {
-      email: "thanh.nn@nandh.vn",
-      password: "Nhl@123456",
-      warehouse_id: 3,
+      email: "thu.nguyenthingoc@nandhlogistics.vn",
+      password: "Admin123!@#",
+      warehouse_id: 1,
     })
     .then((resp) => {
       const token = resp.body.data.token;

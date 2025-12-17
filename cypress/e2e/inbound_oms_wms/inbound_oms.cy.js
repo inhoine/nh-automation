@@ -75,7 +75,7 @@ describe("inbound_OMS", () => {
     selectSupplier("Supplier A");
     nhapMaThamChieuInbound().then((maThamChieuInbound) => {
       cy.log("Mã tham chiếu đã lưu", maThamChieuInbound);
-      const productsInbound = [{ sku: "HOPKH", qty: 100 }];
+      const productsInbound = [{ sku: "MHMSI", qty: 1000 }];
       selectItem(productsInbound);
       inputDemension("10", "10", "10");
       btnCreatePOInbound();

@@ -24,6 +24,9 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+import "cypress-file-upload";
+import "./commands/wms.api";
+
 Cypress.Commands.add("loginOMS", () => {
   cy.session("oms_session", () => {
     cy.visit("https://stg-oms.nandh.vn" + "/login");
@@ -34,6 +37,24 @@ Cypress.Commands.add("loginOMS", () => {
   });
 });
 
+Cypress.Commands.add("loginWMS", () => {
+  cy.visit("https://stg-wms.nandh.vn/login");
+
+  cy.get('input[name="email"]').type(Cypress.env("wmsUser"));
+  cy.get('input[name="password"]').type(Cypress.env("wmsPassword"));
+  cy.get('button[type="submit"]').click();
+
+  cy.get("span.text-muted.fs-10").contains(Cypress.env("fcHN")).click();
+  cy.get('button[type="button"]').contains(Cypress.env("fcHN")).click();
+
+  // ✅ CHỜ TOKEN
+  cy.window()
+    .its("localStorage.token")
+    .should("be.a", "string")
+    .then((token) => {
+      Cypress.env("wmsToken", token);
+    });
+});
 Cypress.Commands.add("addStorageWMS", () => {
   cy.visit(`https://stg-wms.nandh.vn/equipments?page=1&page_size=50`);
 

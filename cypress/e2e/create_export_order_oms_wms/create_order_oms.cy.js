@@ -70,17 +70,56 @@ describe("Create order on OMS", () => {
     return cy.wrap(ma);
   }
 
+  function addDocuments(shouldRun) {
+    if (!shouldRun) {
+      cy.log("BỎ QUA: Bỏ qua việc tải lên tài liệu.");
+      return; // Thoát khỏi hàm nếu điều kiện là false
+    }
+
+    cy.log("BẮT ĐẦU: Tải lên tài liệu.");
+
+    // Logic upload file của bạn
+    const dropZoneSelector =
+      "button.d-flex.align-items-center.gap-1.btn.btn-sm.btn-success";
+    const fileName = "document.docx";
+    const mimeType =
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+    cy.readFile(`cypress/fixtures/${fileName}`, "binary").then(
+      (fileContent) => {
+        cy.get(dropZoneSelector).attachFile(
+          {
+            fileContent: fileContent,
+            fileName: fileName,
+            mimeType: mimeType,
+            encoding: "binary",
+          },
+          { subjectType: "drag-n-drop" }
+        );
+      }
+    );
+  }
+
   function btnCreateOrder() {
     cy.get('button[type="button"]').contains("Tiếp theo").click();
-    return cy.get('button[type="button"]').contains("Tạo đơn").click();
+    cy.wait(1000);
+  }
+
+  // Khai báo hàm
+  function selectShipNow(shouldCheck) {
+    if (shouldCheck) {
+      cy.get("#ship_now").check({ force: true });
+    }
+    cy.wait(1000);
   }
 
   function optionCreateOrder() {
+    cy.get('button[type="button"]').contains("Tạo đơn").click({ force: true });
     cy.get("button.dropdown-item").contains("Tạo và xử lý đơn hàng").click();
     cy.wait(1000);
   }
 
-  Cypress._.times(3, () => {
+  Cypress._.times(5, () => {
     it("Create order successfully", () => {
       let maDonHangOMS; // 1. Khai báo biến để lưu Mã Đơn Hàng
 
@@ -90,11 +129,10 @@ describe("Create order on OMS", () => {
       selectStore();
       selectWarehouse("PK100270");
 
-      const products = [
-        { sku: "MHMSI", qty: 2 },
-        { sku: "MHASUS", qty: 2 },
-      ];
+      const products = [{ sku: "MHASUS", qty: 4 }];
       selectMoreSku(products);
+
+      addDocuments(false);
 
       // B. Lấy Mã Đơn Hàng từ inputOrderID() và lưu vào biến
       return (
@@ -106,6 +144,10 @@ describe("Create order on OMS", () => {
           // C. Thực hiện hành động click (không cần truyền giá trị ở đây)
           .then(() => {
             return btnCreateOrder();
+          })
+
+          .then(() => {
+            return selectShipNow(false);
           })
 
           // D. Chọn option (và đảm bảo nó là Chainable)

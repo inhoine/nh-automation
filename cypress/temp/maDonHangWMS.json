@@ -1,20 +1,19 @@
 {
   "danhSach": [
     {
-      "maOMS": "OrderID-OMS1764923264109",
-      "maWMS": "NHSVC2947028457",
+      "maOMS": "OrderID-OMS1765849668176",
+      "maWMS": "NHSVC2946051774",
       "loaiDon": "Đơn B2C"
     },
     {
-      "maOMS": "OrderID-OMS1764923275688",
-      "maWMS": "NHSVC2947624293",
+      "maOMS": "OrderID-OMS1765849686231",
+      "maWMS": "NHSVC2947036723",
       "loaiDon": "Đơn B2C"
     },
     {
-      "maOMS": "OrderID-OMS1764923285752",
-      "maWMS": "NHSVC2948232238",
+      "maOMS": "OrderID-OMS1765849701252",
+      "maWMS": "NHSVC2947809727",
       "loaiDon": "Đơn B2C"
     }
-  ],
-  "trolleyCode": "NNT1764923317762"
+  ]
 }

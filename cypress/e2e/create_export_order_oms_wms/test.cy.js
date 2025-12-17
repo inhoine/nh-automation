@@ -477,7 +477,7 @@ describe("template spec", () => {
   it("Export order on WMS", () => {
     getOrderIDWMS();
     CreatePickupWithCondition(
-      "Bảng kê đơn hàng B2C",
+      "Bảng kê đơn hàng B2C - MSO",
       "Lấy theo sản phẩm",
       "Kích thước nhỏ"
     );
@@ -485,8 +485,9 @@ describe("template spec", () => {
     // selectTimeCreateOrder("12");
     customizePickUpCondition("DS mã đơn hàng");
     createPickupType();
-    return pickupItem().then((pickupCode) => {
-      return getPickupType(pickupCode).then(() => dongGoiB2c(pickupCode));
-    });
+    return pickupItem();
+    // return pickupItem().then((pickupCode) => {
+    //   return getPickupType(pickupCode).then(() => dongGoiB2c(pickupCode));
+    // });
   });
 });

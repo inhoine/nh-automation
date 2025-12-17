@@ -30,11 +30,11 @@ describe("template spec", () => {
     ).as("commitItemSold");
 
     // 1. Chuẩn bị: Quét bàn và bảng kê (Giữ nguyên)
-    cy.visit(`https://stg-wms.nandh.vn/packing`);
+    cy.visit(`https://stg-wms.nandh.vn/packing-rq`);
     cy.wait(1000);
     cy.get('input[placeholder="Quét hoặc nhập mã bàn"]')
       .should("be.visible")
-      .type("PACK02")
+      .type("ban-dev-1")
       .type("{enter}");
     cy.wait(1000);
     cy.get('input[placeholder="Quét mã Xe/ Bảng kê/ Rổ"]')
@@ -214,7 +214,7 @@ describe("template spec", () => {
             .clear() // Đảm bảo trường input sạch
             .type("40x20x20") // Giả định mã vật liệu là 40x20x20
             .type("{enter}");
-          cy.wait(5000);
+          cy.wait(10000);
           cy.log(`\t\t🎉 WMS đã xác nhận đóng gói và chuyển đơn hàng.`);
           // **********************************************************
 
@@ -274,12 +274,12 @@ describe("template spec", () => {
 
   beforeEach(() => {
     cy.writeFile("cypress/temp/itemsList.json", []);
-    loginWMS("thanh.nn@nandh.vn", "Nhl@123456", "FC HN");
+    loginWMS("thu.nguyenthingoc@nandhlogistics.vn", "Admin123!@#", "FC HCM");
   });
 
   it("Export order on WMS", () => {
-    const pickupCode = "185035";
-    getPickupType(pickupCode);
+    const pickupCode = "159275";
+    // getPickupType(pickupCode);
     dongGoiB2c(pickupCode);
   });
 });

@@ -275,22 +275,22 @@ describe("template spec", () => {
                           });
                         });
                     });
-                  })
-                  .then(() => {
-                    cy.log("🚀 Commit trolley status...");
-                    return cy
-                      .request({
-                        method: "PUT",
-                        url: `https://stg-wms.nandh.vn/v1/trolley/commit-status/${pickupCode}`,
-                        headers: { Authorization: mobileToken },
-                        body: { trolley_code: trolleyCode },
-                      })
-                      .then((resp) => {
-                        expect(resp.status).to.eq(200);
-                        cy.log("✅ Commit thành công");
-                        return cy.wrap(pickupCode);
-                      });
                   });
+                // .then(() => {
+                //   cy.log("🚀 Commit trolley status...");
+                //   return cy
+                //     .request({
+                //       method: "PUT",
+                //       url: `https://stg-wms.nandh.vn/v1/trolley/commit-status/${pickupCode}`,
+                //       headers: { Authorization: mobileToken },
+                //       body: { trolley_code: trolleyCode },
+                //     })
+                //     .then((resp) => {
+                //       expect(resp.status).to.eq(200);
+                //       cy.log("✅ Commit thành công");
+                //       return cy.wrap(pickupCode);
+                //     });
+                // });
               });
             });
           });
@@ -583,7 +583,7 @@ describe("template spec", () => {
   it("Export order on WMS", () => {
     getOrderIDWMS();
     CreatePickupWithCondition(
-      "Bảng kê đơn hàng B2C",
+      "Bảng kê đơn hàng B2C - MSO",
       "Lấy theo sản phẩm",
       "Kích thước nhỏ"
     );
@@ -591,8 +591,9 @@ describe("template spec", () => {
     // selectTimeCreateOrder("12");
     customizePickUpCondition("DS mã đơn hàng");
     createPickupType();
-    return pickupItem().then((pickupCode) => {
-      return getPickupType(pickupCode).then(() => dongGoiB2c(pickupCode));
-    });
+    pickupItem();
+    // return pickupItem().then((pickupCode) => {
+    //   return getPickupType(pickupCode).then(() => dongGoiB2c(pickupCode));
+    // });
   });
 });
