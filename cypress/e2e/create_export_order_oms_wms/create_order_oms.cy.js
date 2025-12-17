@@ -119,7 +119,7 @@ describe("Create order on OMS", () => {
     cy.wait(1000);
   }
 
-  Cypress._.times(5, () => {
+  Cypress._.times(10, () => {
     it("Create order successfully", () => {
       let maDonHangOMS; // 1. Khai báo biến để lưu Mã Đơn Hàng
 
@@ -129,7 +129,7 @@ describe("Create order on OMS", () => {
       selectStore();
       selectWarehouse("PK100270");
 
-      const products = [{ sku: "MHASUS", qty: 4 }];
+      const products = [{ sku: "MHMSI", qty: 5 }];
       selectMoreSku(products);
 
       addDocuments(false);

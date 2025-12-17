@@ -50,8 +50,21 @@ describe("template spec", () => {
     // 2️⃣ Scan vật liệu
     cy.get(locator.materialsInputField).clear().type("40x20x20{enter}");
 
+    cy.wait(10000);
+    // Kiểm tra button "Xác nhận đã in hết"
+    cy.get("body").then(($body) => {
+      // Sử dụng selector ID từ ảnh của bạn
+      if ($body.find("#confirm-had-print-all").length > 0) {
+        // Nếu tìm thấy (length > 0) thì thực hiện click
+        cy.get("#confirm-had-print-all").click({ force: true });
+        cy.log("✅ Đã tìm thấy và click nút Xác nhận in");
+      } else {
+        // Nếu không tìm thấy, Cypress sẽ bỏ qua và chạy lệnh tiếp theo
+        cy.log("ℹ️ Không thấy nút xác nhận, bỏ qua...");
+      }
+    });
+
     // 3️⃣ Kiểm tra UI để quyết định dừng hay tiếp tục
-    cy.wait(10000); // Đợi UI render sau khi scan NVL
 
     // Trả về một "tín hiệu" thông qua alias hoặc check trực tiếp trong lúc đệ quy
     return cy.get("body").then(($body) => {
@@ -68,7 +81,7 @@ describe("template spec", () => {
     });
   }
 
-  function openCustomerTable() {
+  function openOrderTable() {
     cy.get("span[data-cy='detail-list-order']")
       .should("be.visible")
       .click({ force: true });
@@ -78,7 +91,7 @@ describe("template spec", () => {
 
   function packingAllOrders() {
     function packNext() {
-      openCustomerTable();
+      openOrderTable();
 
       cy.get("#customerTable button")
         .contains("Đóng gói")
