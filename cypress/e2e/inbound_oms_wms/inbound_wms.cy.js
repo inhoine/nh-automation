@@ -233,7 +233,7 @@ describe("inbounds_WMS", () => {
                     const timestamp = new Date().getTime();
 
                     for (let i = 1; i <= soLuongCanNhap; i++) {
-                      const serialNumber = `SERIAL-${maBarcode}-${timestamp}-${i}`;
+                      const serialNumber = `${maBarcode}-${i}`;
                       cy.get('input[placeholder="Quét mã serial"]')
                         .type(`${serialNumber}{enter}`)
                         .wait(500);

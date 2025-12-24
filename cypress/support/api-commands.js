@@ -201,3 +201,25 @@ Cypress.Commands.add(
       });
   }
 );
+
+Cypress.Commands.add("getAvailableTotes", (count) => {
+  return cy
+    .request({
+      method: "GET",
+      url: "https://stg-wms.nandh.vn/v1/equipment/list?page_size=100",
+      headers: {
+        Authorization: `Bearer ${Cypress.env("wmsToken")}`,
+      },
+    })
+    .then((res) => {
+      const toteCodes = res.body.data
+        .filter((i) => i.status === "available")
+        .slice(0, count)
+        .map((i) => i.code);
+
+      expect(toteCodes.length).to.eq(count);
+
+      // ✅ wrap để Cypress hiểu đây là async value
+      return cy.wrap(toteCodes, { log: false });
+    });
+});

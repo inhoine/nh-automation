@@ -15,32 +15,45 @@ export function getRequiredToteCount(pickup) {
     return 0;
   }
 
-  if (pickup.is_sso) {
-    return 1;
-  }
-
   if (pickup.is_mso) {
     return pickup.total_order;
   }
 
-  throw new Error("Pickup không phải SSO hoặc MSO");
+  if (pickup.is_sso) {
+    return 1;
+  }
+
+  // fallback: không phải SSO/MSO nhưng vẫn cần tote
+  return pickup.total_order || 1;
 }
 
-export function generateToteCodes(pickup, startIndex = 10) {
-  if (!pickup.is_tote_required) return [];
+// export function generateToteCodes(pickup, startIndex = 244) {
+//   const count = getRequiredToteCount(pickup);
 
-  if (pickup.is_sso) {
-    return [`TOTE-L-${startIndex}`];
-  }
+//   if (count === 0) return [];
 
-  if (pickup.is_mso) {
-    return Array.from(
-      { length: pickup.total_order },
-      (_, idx) => `TOTE-L-${startIndex + idx}`
-    );
-  }
+//   return Array.from(
+//     { length: count },
+//     (_, idx) => `TOTE-M-${startIndex + idx}`
+//   );
+// }
 
-  throw new Error("Pickup không phải SSO hoặc MSO");
+export function generateToteCodes(pickup, startIndex = 303) {
+  const count = getRequiredToteCount(pickup);
+
+  if (count === 0) return [];
+
+  return Array.from(
+    { length: count },
+    (_, idx) => `TOTE-M-${startIndex + idx}`
+  );
+}
+
+export function getToteSizeByPickup(pickup) {
+  if (pickup.tote_size) return pickup.tote_size;
+
+  // default nghiệp vụ
+  return "M";
 }
 
 export function openCustomerTable() {

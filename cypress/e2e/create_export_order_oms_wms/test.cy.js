@@ -485,7 +485,7 @@ describe("template spec", () => {
     // selectTimeCreateOrder("12");
     customizePickUpCondition("DS mã đơn hàng");
     createPickupType();
-    return pickupItem();
+    // return pickupItem();
     // return pickupItem().then((pickupCode) => {
     //   return getPickupType(pickupCode).then(() => dongGoiB2c(pickupCode));
     // });

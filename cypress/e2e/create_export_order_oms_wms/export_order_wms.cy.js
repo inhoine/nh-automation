@@ -71,7 +71,7 @@ describe("template spec", () => {
 
   function selectTote(size) {
     cy.get("div.css-1jqq78o-placeholder")
-      .contains("Chọn kích thước rổ")
+      .contains("Chọn kích thước đơn hàng")
       .click();
     return cy.contains("div", size).click({ force: true });
   }
@@ -275,22 +275,22 @@ describe("template spec", () => {
                           });
                         });
                     });
-                  });
-                // .then(() => {
-                //   cy.log("🚀 Commit trolley status...");
-                //   return cy
-                //     .request({
-                //       method: "PUT",
-                //       url: `https://stg-wms.nandh.vn/v1/trolley/commit-status/${pickupCode}`,
-                //       headers: { Authorization: mobileToken },
-                //       body: { trolley_code: trolleyCode },
-                //     })
-                //     .then((resp) => {
-                //       expect(resp.status).to.eq(200);
-                //       cy.log("✅ Commit thành công");
-                //       return cy.wrap(pickupCode);
-                //     });
-                // });
+                  })
+                .then(() => {
+                  cy.log("🚀 Commit trolley status...");
+                  return cy
+                    .request({
+                      method: "PUT",
+                      url: `https://stg-wms.nandh.vn/v1/trolley/commit-status/${pickupCode}`,
+                      headers: { Authorization: mobileToken },
+                      body: { trolley_code: trolleyCode },
+                    })
+                    .then((resp) => {
+                      expect(resp.status).to.eq(200);
+                      cy.log("✅ Commit thành công");
+                      return cy.wrap(pickupCode);
+                    });
+                });
               });
             });
           });
@@ -583,15 +583,15 @@ describe("template spec", () => {
   it("Export order on WMS", () => {
     getOrderIDWMS();
     CreatePickupWithCondition(
-      "Bảng kê đơn hàng B2C - MSO",
-      "Lấy theo sản phẩm",
-      "Kích thước nhỏ"
+      Cypress.env("pickUpType"),
+      Cypress.env("pickUpStrategy"),
+      Cypress.env("toteSize")
     );
     selectCustomer("auto");
     // selectTimeCreateOrder("12");
     customizePickUpCondition("DS mã đơn hàng");
     createPickupType();
-    pickupItem();
+    // pickupItem();
     // return pickupItem().then((pickupCode) => {
     //   return getPickupType(pickupCode).then(() => dongGoiB2c(pickupCode));
     // });

@@ -1,12 +1,4 @@
 describe("Create order on OMS", () => {
-  before(() => {
-    const filePath = "cypress/temp/maDonHang.json";
-    cy.writeFile(filePath, { maDonHangOMS: [] });
-  });
-  beforeEach(() => {
-    loginOMS("thanh.auto@nandh.vn", "Nhl@12345");
-  });
-
   function loginOMS(email, password) {
     cy.visit("https://stg-oms.nandh.vn/login");
     cy.get('input[name="email"]').type(email);
@@ -118,6 +110,14 @@ describe("Create order on OMS", () => {
     cy.get("button.dropdown-item").contains("Tạo và xử lý đơn hàng").click();
     cy.wait(1000);
   }
+  before(() => {
+    const filePath = "cypress/temp/maDonHang.json";
+    cy.writeFile(filePath, { maDonHangOMS: [] });
+  });
+
+  beforeEach(() => {
+    loginOMS("thanh.auto@nandh.vn", "Nhl@12345");
+  });
 
   Cypress._.times(10, () => {
     it("Create order successfully", () => {
@@ -129,10 +129,10 @@ describe("Create order on OMS", () => {
       selectStore();
       selectWarehouse("PK100270");
 
-      const products = [{ sku: "MHMSI", qty: 5 }];
-      selectMoreSku(products);
+      const products = [{ sku: "353535", qty: 2 }];
+      selectMoreSku(Cypress.env("products"));
 
-      addDocuments(false);
+      addDocuments(Cypress.env("is_docs"));
 
       // B. Lấy Mã Đơn Hàng từ inputOrderID() và lưu vào biến
       return (
@@ -147,7 +147,7 @@ describe("Create order on OMS", () => {
           })
 
           .then(() => {
-            return selectShipNow(false);
+            return selectShipNow(Cypress.env("is_ffnow"));
           })
 
           // D. Chọn option (và đảm bảo nó là Chainable)

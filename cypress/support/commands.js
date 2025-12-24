@@ -44,8 +44,8 @@ Cypress.Commands.add("loginWMS", () => {
   cy.get('input[name="password"]').type(Cypress.env("wmsPassword"));
   cy.get('button[type="submit"]').click();
 
-  cy.get("span.text-muted.fs-10").contains(Cypress.env("fcHN")).click();
-  cy.get('button[type="button"]').contains(Cypress.env("fcHN")).click();
+  cy.get("span.text-muted.fs-10").contains(Cypress.env("fc")).click();
+  cy.get('button[type="button"]').contains(Cypress.env("fc")).click();
 
   // ✅ CHỜ TOKEN
   cy.window()
